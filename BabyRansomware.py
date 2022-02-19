@@ -1,7 +1,6 @@
 import json
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
-from secrets import token_bytes
 import pyaes, pbkdf2, binascii, os, secrets
 
 keyPair = RSA.generate(2048)
@@ -60,7 +59,17 @@ def Decryption():
     while(1):
         private = input("Input Private Key : ")
         if private == hex(keyPair.d) :
-            
+            with open('LocalKey.txt', 'rb') as f:
+                s = f.read()
+                paintext = decryptor.decrypt(s)
+                f.close()
+            with open('LocalKey.txt', 'wb') as f:
+                s = f.write(paintext)
+                f.close()
+            with open('LocalKey.txt', 'r') as f:
+                s = f.read()
+                print(s)
+                f.close()
             with open('Text.txt', 'rb') as f:
                 s = f.read()
                 aes = pyaes.AESModeOfOperationCTR(key, pyaes.Counter(iv))
@@ -77,17 +86,7 @@ def Decryption():
             with open('Picture.jpg', 'wb') as f:
                 s = f.write(ciphertext)
                 f.close()
-            with open('LocalKey.txt', 'rb') as f:
-                s = f.read()
-                paintext = decryptor.decrypt(s)
-                f.close()
-            with open('LocalKey.txt', 'wb') as f:
-                s = f.write(paintext)
-                f.close()
-            with open('LocalKey.txt', 'r') as f:
-                s = f.read()
-                print(s)
-                f.close()
+            
             break
         else:
             print("Private Key not correct")
